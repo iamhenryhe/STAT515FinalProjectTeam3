@@ -2,10 +2,17 @@
 title: "Final Project"
 author: "Team13"
 date: "2024-05-03"
-output: html_document
+output:
+  html_document:
+    code_folding: hide
 runtime: shiny
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(kableExtra)
+```
 
 # STAT515 Final Project
 
@@ -19,7 +26,7 @@ runtime: shiny
 
 ### This visualization is an interactive map with the addition of the shiny feature, which means that we have taken into account the needs of some colorblind groups, and we can switch the background color at will so that different viewers can access the information in the graphic.
 
-```{r echo=FALSE}
+```{r load-libraries, message=FALSE}
 library(leaflet)
 library(dplyr)
 library(countrycode)
@@ -28,6 +35,7 @@ library(rnaturalearth)
 library(ggplot2)
 library(sf)
 library(tmap)
+library(tidyverse)
 
 # load data
 data <- read.csv("/Users/zijiehe/Desktop/STAT515FINAL/share-who-report-lifetime-anxiety-or-depression.csv")
@@ -67,9 +75,9 @@ tm
 
 ### The depression dataset is taken from https://ourworldindata.org/ and it includes 1147 individual records and 36 attributes such as sex ,age marital status , Number of children in the household, Household size, Years of education, Consumption of nondurable goods, Value of durable assets,value of cell phone assets,Savings assets,Total owned land assets,Total food consumption,Alcohol consumption,Tobacco consumption,Consumption of medical care,Consumption of children's medical care,Consumption of education,Consumption of social activities,Other consumption, Nonagricultural income,Flow cost of nonagricultural business,Total cost,Frequency of purchasing full-price food items on a regular basis,How often children buy full-price food,Meat food consumption,Whether the diet is adequate,Frequency of sleep deprivation due to hunger, Number of days household members were sick, Number of deaths of children under five years old,Expenses on education,School attendance rate,Investment in durable goods,Investment in nondurable goods,Depressed status. This dataset does not include any missing values but it is not balanced, the numbeor of records that have depressed value  equal to 0 is 953 and the number of records which have depression value equal to 1 is 194. 
 
-### 3.1.2 structure of dataset
+### 3.1.2 The meanings of each variable
 
-```{r echo=FALSE, results='hide'}
+```{r results='hide'}
 library(ggplot2)
 library(caret)
 library(GGally)
@@ -88,12 +96,39 @@ cor_matrix <- cor(data, use = "complete.obs")
 print(cor_matrix)
 ```
 
+```{r}
+variable_names <- c("sex", "age", "marital_status", "children", "household_size", "years_of_edu", 
+                    "hh_children", "cons_nondurable", "asset_durable", "asset_phone", "asset_savings", 
+                    "asset_land_owned_total", "cons_allfood", "cons_alcohol", "cons_tobacco", "cons_med_total", 
+                    "cons_med_children", "cons_ed", "cons_social", "cons_other", "ent_nonag_revenue", 
+                    "ent_nonag_flowcost", "ent_total_cost", "fs_adwholed_often", "fs_chwholed_often", 
+                    "fs_meat", "fs_enoughtom", "fs_sleephun", "med_sickdays_hhave", "med_u5_deaths", 
+                    "ed_expenses", "ed_schoolattend", "durable_investment", "nondurable_investment", "depressed")
+
+variable_descriptions <- c("Sex, may be 1 for male, 0 for female.", "Age.", "Marital status, may be 1 for married, 0 for unmarried.", 
+                           "The number of children in the household.", "Household size.", "Years of education.", 
+                           "The number of children in the household.", "Consumption of non-durable goods.", "Value of durable assets.", 
+                           "The value of cell phone assets.", "Savings assets.", "Total owned land assets.", 
+                           "Total food consumption.", "Alcohol consumption.", "Tobacco consumption.", 
+                           "Consumption of medical care.", "Consumption of children's medical care.", "Consumption of education.", 
+                           "Consumption of social activities.", "Other consumption.", "Nonagricultural income.", 
+                           "Flow cost of non-agricultural business.", "Total cost.", "Frequency of purchasing full-price food items on a regular basis.", 
+                           "How often children buy full-price food.", "Meat food consumption.", "Whether the diet is adequate.", 
+                           "Frequency of sleep deprivation due to hunger.", "Number of days household members were sick.", 
+                           "The number of deaths of children under five years old.", "Expenses on education.", "School attendance rate.", 
+                           "Investment in durable goods.", "Investment in nondurable goods.", "Depressed status, where 0 is not depressed and 1 is depressed.")
+
+variable_data <- data.frame(Variable = variable_names, Description = variable_descriptions)
+kable(variable_data, format = "html", table.attr = "style='width:100%;'")
+
+```
+
 
 ## 3.2 Explore the data
 
 ### 3.2.1 Box plot and Bar plot.
 
-```{r echo=FALSE}
+```{r}
 #######explore the data
 library(ggplot2)
 
@@ -150,7 +185,7 @@ shinyApp(ui = ui, server = server)
 
 ### 3.2.2 HeatMap
 
-```{r echo=FALSE}
+```{r}
 # heatmap
 heatmap <- plot_ly(z = cor_matrix, x = colnames(cor_matrix), y = rownames(cor_matrix), type = "heatmap")
 heatmap
@@ -170,7 +205,7 @@ heatmap
 ## 4.1 PCA
 
 ### 4.1.1 PCA application
-```{r echo=FALSE}
+```{r}
 ##################################
 ##    PCA      
 #################################
@@ -250,7 +285,7 @@ confusionMatrix(predicted_classes_pca, test_labels)
 
 ## 4.2.1 cleaned_dataset
 
-```{r echo=FALSE}
+```{r}
 library(ggplot2)
 library(caret)
 library(GGally)
@@ -274,7 +309,7 @@ print(cor_matrix)
 
 ### 3.2.1 Box plot and Bar plot.
 
-```{r echo=FALSE}
+```{r}
 #######look at the cleandd data
 
 data <- read.csv("/Users/zijiehe/Desktop/515Final/cleaned_dataset.csv")
@@ -305,7 +340,7 @@ ggplot(data = as.data.frame(depressed_counts), aes(x = Var1, y = Freq, fill = as
 
 ## 4.4 Down Sampling
 
-```{r echo=FALSE}
+```{r}
 #######look at the down-sampling data
 
 data <- read.csv("/Users/zijiehe/Desktop/515Final/data_up.csv")
@@ -325,7 +360,7 @@ ggplot(data = as.data.frame(depressed_counts), aes(x = Var1, y = Freq, fill = as
 
 ### 5.1.1 Logistic Model
 
-```{r echo=FALSE}
+```{r}
 # Load necessary libraries
 library(readxl)
 library(caret)
@@ -397,7 +432,7 @@ perform_logistic_regression(data)
 
 ### 5.1.2 Weighted Logistic model
 
-```{r echo=FALSE}
+```{r }
 # Load necessary libraries
 library(caret)
 library(dplyr)
@@ -471,7 +506,7 @@ perform_weighted_logistic_regression(data, weight = 4)
 
 ### 5.1.3 Decision Tree model
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 # Load necessary libraries
 library(readxl)
 library(caret)
@@ -552,7 +587,7 @@ perform_decision_tree(data)
 
 ### 5.2.1 Logistic model on balanced dataset (Upsampling)
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 # Load necessary libraries
 library(readxl)
 library(caret)
@@ -640,7 +675,7 @@ perform_logistic_regression(balanced_data)
 
 ### 5.2.2 Decision Tree model on balanced dataset (Upsampling)
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 # Load necessary libraries
 library(readxl)
 library(caret)
@@ -735,7 +770,7 @@ perform_decision_tree(balanced_data)
 
 ### 5.3.1 Logistic model on balanced dataset (down sampling)
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 # Load necessary libraries
 library(readxl)
 library(caret)
@@ -821,7 +856,7 @@ perform_logistic_regression(balanced_data)
 
 ### 5.3.2 Decision Tree model on balanced dataset (down sampling)
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 # Load necessary libraries
 library(readxl)
 library(caret)
@@ -893,3 +928,64 @@ perform_decision_tree(balanced_data)
 ### FIRST LEVEL SEGMENTATION: Further segmentation is done based on med_sickdays_have which shows that health status is also an important factor that affects depression status.
 
 ### Deeper nodes: Various variables such as ed_expenses, cons_social etc. are used in deeper nodes which shows that the model tries to categorize through several different features to increase the accuracy of decision making.
+
+
+## 6. Comparison
+
+### 6.1 Result Table
+
+```{r}
+results <- data.frame(
+  Condition = c("Imbalanced", "Imbalanced", "Imbalanced", 
+                "Balanced - Upsampling", "Balanced - Upsampling", 
+                "Balanced - Downsampling", "Balanced - Downsampling"),
+  Model = c("Logistic Regression", "Weighted Logistic Regression", "Decision Tree",
+            "Logistic Regression", "Decision Tree", 
+            "Logistic Regression", "Decision Tree"),
+  Accuracy = c(0.8436, 0.7469, 0.823, 0.6359, 0.7087, 0.5676, 0.5541),
+  Kappa = c(0.0278, 0.2413, -0.0102, 0.2718, 0.4175, 0.1351, 0.1081),
+  Sensitivity = c(0.99029, 0.7883, 0.96602, 0.6893, 0.6699, 0.5405, 0.5135),
+  Specificity = c(0.02703, 0.52, 0.02703, 0.5825, 0.7476, 0.5946, 0.5946)
+)
+
+kable(results, caption = "Performance Metrics for Various Models",
+      col.names = c("Condition", "Model", "Accuracy", "Kappa", "Sensitivity", "Specificity"),
+      format = "html", align = c('l', 'l', 'c', 'c', 'c', 'c')) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = FALSE, position = "left") %>%
+  row_spec(5, background = "#90EE90")  # Highlight the fifth row with a yellow background
+```
+
+```{r}
+
+data <- read.csv(textConnection("
+Condition,Model,Accuracy,Kappa,Sensitivity,Specificity
+Imbalanced,Logistic Regression,0.8436,0.0278,0.99029,0.02703
+Imbalanced,Weighted Logistic Regression,0.7469,0.2413,0.78830,0.52000
+Imbalanced,Decision Tree,0.8230,-0.0102,0.96602,0.02703
+Balanced - Upsampling,Logistic Regression,0.6359,0.2718,0.68930,0.58250
+Balanced - Upsampling,Decision Tree,0.7087,0.4175,0.66990,0.74760
+Balanced - Downsampling,Logistic Regression,0.5676,0.1351,0.54050,0.59460
+Balanced - Downsampling,Decision Tree,0.5541,0.1081,0.51350,0.59460
+"))
+
+data_long <- data %>%
+  pivot_longer(cols = c("Accuracy", "Kappa", "Sensitivity", "Specificity"),
+               names_to = "Metric", values_to = "Value")
+
+p <- ggplot(data_long, aes(x = Condition, y = Value, color = Model, group = Model)) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~ Metric, scales = "free_y") +
+  labs(title = "Model Performance Comparison",
+       x = "Condition",
+       y = "Value") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5),
+        plot.margin = margin(t = 10, r = 10, b = 20, l = 10, unit = "pt"))
+
+# plotly
+gg_plotly <- ggplotly(p)
+gg_plotly
+
+```
+
+
