@@ -183,6 +183,7 @@ server <- function(input, output) {
 shinyApp(ui = ui, server = server)
 ```
 
+## Because R Markdown cannot support Shiny, we used screenshots as a replacement.
 
 ![Shiny](/Users/zijiehe/Desktop/STAT515FinalProjectTeam3/box.jpg)
 
