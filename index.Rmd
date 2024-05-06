@@ -1,6 +1,6 @@
 ---
 title: "Final Project"
-author: "Team13"
+author: "Team4-Zijie, Aida, Sajad"
 date: "2024-05-03"
 output:
   html_document:
